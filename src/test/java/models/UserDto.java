@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserDTO {
+public class UserDto {
 
     private Integer id;
     private String email;
@@ -26,4 +26,3 @@ public class UserDTO {
 
     private String avatar;
 }
-

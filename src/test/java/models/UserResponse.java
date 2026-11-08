@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserResponse {
-    private UserDTO data;
-    private SupportDTO support;
+    private UserDto data;
+    private SupportDto support;
 }

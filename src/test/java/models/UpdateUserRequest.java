@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class UpdateUserModel {
+public class UpdateUserRequest {
 
     private String name;
     private String job;

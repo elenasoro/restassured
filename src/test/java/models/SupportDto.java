@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SupportDTO {
+public class SupportDto {
     private String url;
     private String text;
 }

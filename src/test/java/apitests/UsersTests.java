@@ -1,10 +1,8 @@
 package apitests;
 
 import config.ApiConfig;
-import constants.Credentials;
-import models.RegisterUserModel;
-import models.UpdateUserModel;
-import models.UserDTO;
+import models.UpdateUserRequest;
+import models.UserDto;
 import models.UserResponse;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -14,12 +12,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.hamcrest.Matchers.*;
 
-public class ReqresTests {
+public class UsersTests {
 
     @Test
     public void getUserByIdTest() {
 
-        UserDTO expectedUser = UserDTO.builder()
+        UserDto expectedUser = UserDto.builder()
                 .id(2)
                 .email("janet.weaver@reqres.in")
                 .firstName("Janet")
@@ -63,7 +61,7 @@ public class ReqresTests {
 
     @Test
     public void updateUserTest() {
-        UpdateUserModel updateBody = UpdateUserModel
+        UpdateUserRequest updateBody = UpdateUserRequest
                 .builder()
                 .name("Lena")
                 .job("QA")
@@ -88,77 +86,6 @@ public class ReqresTests {
                 .delete("/users/{id}", 2)
                 .then()
                 .statusCode(204);
-    }
-
-    @Test
-    public void registerUserSuccessfulTest() {
-        RegisterUserModel registerBody = RegisterUserModel
-                .builder()
-                .email(Credentials.EMAIL)
-                .password(Credentials.PASSWORD_FOR_REGISTER)
-                .build();
-
-        given()
-                .spec(ApiConfig.requestSpec())
-                .body(registerBody)
-                .when()
-                .post("/register")
-                .then()
-                .statusCode(200)
-                .body("id", not(equalTo(null)))
-                .body("token", not(equalTo(null)));
-    }
-
-    @Test
-    public void registerUserUnsuccessfulTest() {
-        RegisterUserModel registerBody = RegisterUserModel
-                .builder()
-                .email(Credentials.EMAIL)
-                .build();
-
-        given()
-                .spec(ApiConfig.requestSpec())
-                .body(registerBody)
-                .when()
-                .post("/register")
-                .then()
-                .statusCode(400)
-                .body("error", equalTo("Missing password"));
-    }
-
-    @Test
-    public void loginSuccessfulTest() {
-        RegisterUserModel loginBody = RegisterUserModel
-                .builder()
-                .email(Credentials.EMAIL)
-                .password(Credentials.PASSWORD_FOR_LOGIN)
-                .build();
-
-        given()
-                .spec(ApiConfig.requestSpec())
-                .body(loginBody)
-                .when()
-                .post("/login")
-                .then()
-                .statusCode(200)
-                .body("token", not(equalTo(null)));
-    }
-
-    @Test
-    public void loginUnsuccessfulTest() {
-        RegisterUserModel loginBody = RegisterUserModel
-                .builder()
-                .email(Credentials.EMAIL)
-                .build();
-
-        given()
-                .spec(ApiConfig.requestSpec())
-                .body(loginBody)
-                .when()
-                .post("/login")
-                .then()
-                .statusCode(400)
-                .body("error", equalTo("Missing password"));
     }
 
     @Test
