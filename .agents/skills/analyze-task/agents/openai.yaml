@@ -1,0 +1,3 @@
+interface:
+  display_name: "Analyze QA Task"
+  short_description: "Analyze Jira stories, acceptance criteria, API specifications and feature requests for testability, "

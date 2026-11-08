@@ -1,0 +1,3 @@
+interface:
+  display_name: "Plan Testing Pyramid"
+  short_description: "Design risk-based test coverage across unit, component, integration, API and end-to-end levels for a"

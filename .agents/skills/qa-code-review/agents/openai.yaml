@@ -1,0 +1,3 @@
+interface:
+  display_name: "Review QA Automation Code"
+  short_description: "Review Java REST Assured TestNG AssertJ API test changes for correctness, maintainability, flaky tes"
