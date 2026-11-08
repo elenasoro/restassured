@@ -2,11 +2,11 @@ package apitests;
 
 import config.ApiConfig;
 import constants.Credentials;
-import io.restassured.http.ContentType;
 import models.RegisterUserModel;
 import models.UpdateUserModel;
 import models.UserDTO;
 import models.UserResponse;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
@@ -30,7 +30,7 @@ public class ReqresTests {
         UserResponse response = given()
                 .spec(ApiConfig.requestSpec())
                 .when()
-                .get("/users/2")
+                .get("/users/{id}", 2)
                 .then()
                 .statusCode(200)
                 .extract()
@@ -39,6 +39,26 @@ public class ReqresTests {
         assertThat(response.getData())
                 .usingRecursiveComparison()
                 .isEqualTo(expectedUser);
+    }
+
+    @DataProvider(name = "invalidUserIds")
+    public Object[][] invalidUserIds() {
+        return new Object[][]{
+                {"0"},
+                {"-1"},
+                {"abc"},
+                {"2.5"}
+        };
+    }
+
+    @Test(dataProvider = "invalidUserIds")
+    public void getUserByInvalidIdTest(String id) {
+        given()
+                .spec(ApiConfig.requestSpec())
+                .when()
+                .get("/users/{id}", id)
+                .then()
+                .statusCode(404);
     }
 
     @Test
@@ -50,22 +70,22 @@ public class ReqresTests {
                 .build();
 
         given()
-                .contentType(ContentType.JSON)
-                .and()
+                .spec(ApiConfig.requestSpec())
                 .body(updateBody)
                 .when()
-                .patch("https://reqres.in/api/users/2")
+                .patch("/users/{id}", 2)
                 .then()
                 .statusCode(200)
-                .body("name", equalTo("Lena"))
-                .body("job", equalTo("QA"));
+                .body("name", equalTo(updateBody.getName()))
+                .body("job", equalTo(updateBody.getJob()));
     }
 
     @Test
     public void deleteUserTest() {
         given()
+                .spec(ApiConfig.requestSpec())
                 .when()
-                .delete("https://reqres.in/api/users/2")
+                .delete("/users/{id}", 2)
                 .then()
                 .statusCode(204);
     }
@@ -79,11 +99,10 @@ public class ReqresTests {
                 .build();
 
         given()
-                .contentType(ContentType.JSON)
-                .and()
+                .spec(ApiConfig.requestSpec())
                 .body(registerBody)
                 .when()
-                .post("https://reqres.in/api/register")
+                .post("/register")
                 .then()
                 .statusCode(200)
                 .body("id", not(equalTo(null)))
@@ -98,11 +117,10 @@ public class ReqresTests {
                 .build();
 
         given()
-                .contentType(ContentType.JSON)
-                .and()
+                .spec(ApiConfig.requestSpec())
                 .body(registerBody)
                 .when()
-                .post("https://reqres.in/api/register")
+                .post("/register")
                 .then()
                 .statusCode(400)
                 .body("error", equalTo("Missing password"));
@@ -117,11 +135,10 @@ public class ReqresTests {
                 .build();
 
         given()
-                .contentType(ContentType.JSON)
-                .and()
+                .spec(ApiConfig.requestSpec())
                 .body(loginBody)
                 .when()
-                .post("https://reqres.in/api/login")
+                .post("/login")
                 .then()
                 .statusCode(200)
                 .body("token", not(equalTo(null)));
@@ -135,11 +152,10 @@ public class ReqresTests {
                 .build();
 
         given()
-                .contentType(ContentType.JSON)
-                .and()
+                .spec(ApiConfig.requestSpec())
                 .body(loginBody)
                 .when()
-                .post("https://reqres.in/api/login")
+                .post("/login")
                 .then()
                 .statusCode(400)
                 .body("error", equalTo("Missing password"));
@@ -148,9 +164,10 @@ public class ReqresTests {
     @Test
     public void delayResponseTest() {
         given()
+                .spec(ApiConfig.requestSpec())
                 .queryParam("delay", "3")
                 .when()
-                .get("https://reqres.in/api/users")
+                .get("/users")
                 .then()
                 .statusCode(200);
     }
