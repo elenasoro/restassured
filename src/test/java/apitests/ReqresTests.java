@@ -1,15 +1,45 @@
 package apitests;
 
+import config.ApiConfig;
 import constants.Credentials;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import models.RegisterUserModel;
 import models.UpdateUserModel;
+import models.UserDTO;
+import models.UserResponse;
 import org.testng.annotations.Test;
+
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.hamcrest.Matchers.*;
 
 public class ReqresTests {
+
+    @Test
+    public void getUserByIdTest() {
+
+        UserDTO expectedUser = UserDTO.builder()
+                .id(2)
+                .email("janet.weaver@reqres.in")
+                .firstName("Janet")
+                .lastName("Weaver")
+                .avatar("https://reqres.in/img/faces/2-image.jpg")
+                .build();
+
+        UserResponse response = given()
+                .spec(ApiConfig.requestSpec())
+                .when()
+                .get("/users/2")
+                .then()
+                .statusCode(200)
+                .extract()
+                .as(UserResponse.class);
+
+        assertThat(response.getData())
+                .usingRecursiveComparison()
+                .isEqualTo(expectedUser);
+    }
 
     @Test
     public void updateUserTest() {
@@ -19,8 +49,7 @@ public class ReqresTests {
                 .job("QA")
                 .build();
 
-        RestAssured
-                .given()
+        given()
                 .contentType(ContentType.JSON)
                 .and()
                 .body(updateBody)
@@ -34,8 +63,7 @@ public class ReqresTests {
 
     @Test
     public void deleteUserTest() {
-        RestAssured
-                .given()
+        given()
                 .when()
                 .delete("https://reqres.in/api/users/2")
                 .then()
@@ -50,8 +78,7 @@ public class ReqresTests {
                 .password(Credentials.PASSWORD_FOR_REGISTER)
                 .build();
 
-        RestAssured
-                .given()
+        given()
                 .contentType(ContentType.JSON)
                 .and()
                 .body(registerBody)
@@ -70,8 +97,7 @@ public class ReqresTests {
                 .email(Credentials.EMAIL)
                 .build();
 
-        RestAssured
-                .given()
+        given()
                 .contentType(ContentType.JSON)
                 .and()
                 .body(registerBody)
@@ -90,8 +116,7 @@ public class ReqresTests {
                 .password(Credentials.PASSWORD_FOR_LOGIN)
                 .build();
 
-        RestAssured
-                .given()
+        given()
                 .contentType(ContentType.JSON)
                 .and()
                 .body(loginBody)
@@ -109,8 +134,7 @@ public class ReqresTests {
                 .email(Credentials.EMAIL)
                 .build();
 
-        RestAssured
-                .given()
+        given()
                 .contentType(ContentType.JSON)
                 .and()
                 .body(loginBody)
@@ -123,8 +147,7 @@ public class ReqresTests {
 
     @Test
     public void delayResponseTest() {
-        RestAssured
-                .given()
+        given()
                 .queryParam("delay", "3")
                 .when()
                 .get("https://reqres.in/api/users")
